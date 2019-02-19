@@ -15,6 +15,10 @@ module.exports = function validateJobInput(data) {
     errors.tite = 'Title field is required';
   }
 
+  if (Validator.isEmpty(data.required_skills)) {
+    errors.required_skills = 'Skills list is required';
+  }
+
   return {
     errors,
     isValid: isEmpty(errors)

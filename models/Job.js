@@ -15,6 +15,14 @@ const JobSchema = new Schema({
     type: String,
     required: true
   },
+  required_skills: [
+    {
+      skill: {
+        type: Schema.Types.ObjectId,
+        ref: 'skills'
+      }
+    }
+  ],
   created_at: {
     type: Date,
     default: Date.now
