@@ -45,6 +45,12 @@ client.on('connect', () => {
 client.on('error', (e) => {
   console.log('REDIS ERROR', e);
  });
+
+const jobs = require('./routes/api/jobs');
+
+// Use Routes
+app.use('/api/jobs', jobs);
+
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
