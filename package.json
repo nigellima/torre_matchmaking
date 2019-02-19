@@ -1,0 +1,20 @@
+{
+  "name": "torre_matchmaking",
+  "version": "1.0.0",
+  "description": "TORRE's test project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nigel Lima",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "concurrently": "^4.1.0",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.14",
+    "nodemon": "^1.18.10",
+    "validator": "^10.11.0"
+  }
+}
