@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const SkillSchema = new Schema({
-  description: {
+  name: {
     type: String,
     required: true
   },
