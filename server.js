@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
+const redis = require('redis');
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(bodyParser.json());
 
 // DB Config
 const db = require('./config/keys').mongoURI;
+const redisDb = require('./config/keys').mongoURI;
 
 // Connect to MongoDB
 mongoose
@@ -18,7 +20,31 @@ mongoose
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
 
+//Setting up REDIS environment
+let connectionString = require('./config/keys').redisURI;
 
+if (connectionString === undefined) {  
+  console.error("Please set the COMPOSE_REDIS_URL environment variable");
+  process.exit(1);
+}
+
+let client = null;
+
+if (connectionString.startsWith("rediss://")) {  
+  client = redis.createClient(connectionString, {
+    tls: { servername: new URL(connectionString).hostname }
+  });
+} else {
+  client = redis.createClient(connectionString);
+}
+
+client.on('connect', () => {
+  console.log('REDIS READY');
+});
+
+client.on('error', (e) => {
+  console.log('REDIS ERROR', e);
+ });
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
