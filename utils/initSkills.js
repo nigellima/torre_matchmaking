@@ -25,18 +25,20 @@ const initSkillsFromProfiles = async () => {
     await people.map(async p => {
       try {
         const profile = await fetch('https://torre.bio/api/bios/'+p.publicId).then(response => response.json());
-        profile.strengths.map(async skill => {
-          Skill.findOne({code: skill.code})
-            .then(s => {
-              if(s === undefined || s === null){
-                const newSkill = new Skill({
-                  code: skill.code,
-                  name: skill.name
-                });
-                newSkill.save().then(res => console.log(res));
-              }
-            });
-        });
+        if(profile){
+          profile.strengths.map(async skill => {
+            Skill.findOne({code: skill.code})
+              .then(s => {
+                if(s === undefined || s === null){
+                  const newSkill = new Skill({
+                    code: skill.code,
+                    name: skill.name
+                  });
+                  newSkill.save().then(res => console.log(res));
+                }
+              });
+          });
+        }
       } catch (error) {
         console.log(error)
       }
