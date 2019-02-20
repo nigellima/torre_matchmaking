@@ -22,7 +22,7 @@ const initSkillsFromProfiles = async () => {
   }
   
   if(people){
-    await people.map(async p => {
+    people.map(async p => {
       try {
         const profile = await fetch('https://torre.bio/api/bios/'+p.publicId).then(response => response.json());
         if(profile){
