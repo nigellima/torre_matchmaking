@@ -1,12 +1,11 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
-import NavigationIcon from '@material-ui/icons/Navigation';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+
+import JobsList from './JobsList';
 
 const styles = theme => ({
   text: {
@@ -36,6 +35,7 @@ function Dashboard(props) {
         Add New Job
         <AddIcon className={classes.rightIcon} />
       </Button>
+      <JobsList/>
     </div>
   )
 }
