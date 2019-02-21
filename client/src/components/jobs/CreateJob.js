@@ -5,6 +5,10 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
+import Chip from '@material-ui/core/Chip';
+import Paper from '@material-ui/core/Paper';
+import Downshift from 'downshift';
+import deburr from 'lodash/deburr';
 
 import TextEditor from './TextEditor';
 
@@ -23,15 +27,117 @@ const styles = theme => ({
   },
 });
 
-class NewJob extends Component {
 
+class NewJob extends Component {
   constructor(props){
     super(props);
     this.state = {
       description: '',
-      contract_type: ''
+      contract_type: '',
+      inputValue: '',
+      selectedItem: [],
+      suggestions: [
+        { label: 'Afghanistan' },
+        { label: 'Aland Islands' },
+        { label: 'Albania' },
+        { label: 'Algeria' },
+      ]
     }
   }
+
+  //Autocomplete functions
+  renderInput = (inputProps) => {
+    const { InputProps, classes, ref, ...other } = inputProps;
+
+    return (
+      <TextField
+        InputProps={{
+          inputRef: ref,
+          classes: {
+            root: classes.inputRoot,
+            input: classes.inputInput,
+          },
+          ...InputProps,
+        }}
+        {...other}
+      />
+    );
+  }
+
+  renderSuggestion = ({ suggestion, index, itemProps, highlightedIndex, selectedItem }) => {
+    const isHighlighted = highlightedIndex === index;
+    const isSelected = (selectedItem || '').indexOf(suggestion.label) > -1;
+
+    return (
+      <MenuItem
+        {...itemProps}
+        key={suggestion.label}
+        selected={isHighlighted}
+        component="div"
+        style={{
+          fontWeight: isSelected ? 500 : 400,
+        }}
+      >
+        {suggestion.label}
+      </MenuItem>
+    );
+  }
+
+
+  getSuggestions = (value) => {
+    const inputValue = deburr(value.trim()).toLowerCase();
+    const inputLength = inputValue.length;
+    let count = 0;
+
+    return inputLength === 0
+      ? []
+      : this.state.suggestions.filter(suggestion => {
+          const keep =
+            count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
+
+          if (keep) {
+            count += 1;
+          }
+
+          return keep;
+        });
+  }
+
+  handleKeyDown = event => {
+    const { inputValue, selectedItem } = this.state;
+    if (selectedItem.length && !inputValue.length && event.key === 'Backspace') {
+      this.setState({
+        selectedItem: selectedItem.slice(0, selectedItem.length - 1),
+      });
+    }
+  };
+
+  handleInputChange = event => {
+    this.setState({ inputValue: event.target.value });
+  };
+
+  handleChange = item => {
+    let { selectedItem } = this.state;
+
+    if (selectedItem.indexOf(item) === -1) {
+      selectedItem = [...selectedItem, item];
+    }
+
+    this.setState({
+      inputValue: '',
+      selectedItem,
+    });
+    console.log(this.state.selectedItem)
+  };
+
+  handleDelete = item => () => {
+    this.setState(state => {
+      const selectedItem = [...state.selectedItem];
+      selectedItem.splice(selectedItem.indexOf(item), 1);
+      return { selectedItem };
+    });
+  };
+  //End of autocomplete functions
 
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
@@ -44,6 +150,7 @@ class NewJob extends Component {
 
   render() {
     const { classes } = this.props;
+    const { inputValue, selectedItem } = this.state;
     const types = [
         { label: '* Select Contract Type ', value: 0 },
         { label: 'Long-term', value: 'LONG' },
@@ -112,6 +219,60 @@ class NewJob extends Component {
                 </MenuItem>
               ))}
             </TextField>
+
+            {/* Autocomplete for required skillset */}
+            <Typography className={classes.text} variant="h5" gutterBottom>
+              Select Required Skills
+            </Typography>
+            <Downshift
+              id="downshift-multiple"
+              inputValue={inputValue}
+              onChange={this.handleChange}
+              selectedItem={selectedItem}
+            >
+              {({
+                getInputProps,
+                getItemProps,
+                isOpen,
+                inputValue: inputValue2,
+                selectedItem: selectedItem2,
+                highlightedIndex,
+              }) => (
+                <div className={classes.container}>
+                  {this.renderInput({
+                    fullWidth: true,
+                    classes,
+                    InputProps: getInputProps({
+                      startAdornment: selectedItem.map(item => (
+                        <Chip
+                          key={item}
+                          tabIndex={-1}
+                          label={item}
+                          className={classes.chip}
+                          onDelete={this.handleDelete(item)}
+                        />
+                      )),
+                      onChange: this.handleInputChange,
+                      onKeyDown: this.handleKeyDown,
+                      placeholder: 'Select multiple skills',
+                    }),
+                  })}
+                  {isOpen ? (
+                    <Paper className={classes.paper} square>
+                      {this.getSuggestions(inputValue2).map((suggestion, index) =>
+                        this.renderSuggestion({
+                          suggestion,
+                          index,
+                          itemProps: getItemProps({ item: suggestion.label }),
+                          highlightedIndex,
+                          selectedItem: selectedItem2,
+                        }),
+                      )}
+                    </Paper>
+                  ) : null}
+                </div>
+              )}
+            </Downshift>
           </Grid>   
         </Grid> 
         
