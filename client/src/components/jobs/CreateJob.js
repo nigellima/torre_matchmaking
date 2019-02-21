@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -11,6 +13,7 @@ import Downshift from 'downshift';
 import deburr from 'lodash/deburr';
 
 import TextEditor from './TextEditor';
+import { getMatchedSkills } from '../../actions/skillActions'
 
 const styles = theme => ({
   container: {
@@ -39,12 +42,7 @@ class NewJob extends Component {
       contract_type: '',
       inputValue: '',
       selectedItem: [],
-      suggestions: [
-        { label: 'Afghanistan' },
-        { label: 'Aland Islands' },
-        { label: 'Albania' },
-        { label: 'Algeria' },
-      ]
+      suggestions: []
     }
   }
 
@@ -116,12 +114,13 @@ class NewJob extends Component {
   };
 
   handleInputChange = event => {
+    this.props.getMatchedSkills(event.target.value);
     this.setState({ inputValue: event.target.value });
   };
 
   handleChange = item => {
     let { selectedItem } = this.state;
-
+    
     if (selectedItem.indexOf(item) === -1) {
       selectedItem = [...selectedItem, item];
     }
@@ -160,6 +159,7 @@ class NewJob extends Component {
         { label: 'Short-term', value: 'SHORT' },
     ]
 
+    const { skills } = this.props.skill;
 
     return (
       <div className={classes.container}>
@@ -262,7 +262,7 @@ class NewJob extends Component {
                   })}
                   {isOpen ? (
                     <Paper className={classes.paper} square>
-                      {this.getSuggestions(inputValue2).map((suggestion, index) =>
+                      {skills.map((suggestion, index) =>
                         this.renderSuggestion({
                           suggestion,
                           index,
@@ -288,4 +288,11 @@ NewJob.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(NewJob);
+
+const mapStateToProps = state => ({
+  skill: state.skill,
+});
+
+export default withRouter(
+  connect(mapStateToProps, { getMatchedSkills })(withStyles(styles)(NewJob))
+)
