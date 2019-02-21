@@ -25,6 +25,9 @@ const styles = theme => ({
   text: {
     paddingTop: theme.spacing.unit * 2,
   },
+  chip: {
+    margin: `${theme.spacing.unit / 2}px ${theme.spacing.unit / 4}px`,
+  },
 });
 
 
@@ -127,7 +130,7 @@ class NewJob extends Component {
       inputValue: '',
       selectedItem,
     });
-    console.log(this.state.selectedItem)
+    
   };
 
   handleDelete = item => () => {
