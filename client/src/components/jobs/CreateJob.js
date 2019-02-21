@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import Downshift from 'downshift';
 import deburr from 'lodash/deburr';
 
@@ -30,6 +31,10 @@ const styles = theme => ({
   },
   chip: {
     margin: `${theme.spacing.unit / 2}px ${theme.spacing.unit / 4}px`,
+  },
+  button: {
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
   },
 });
 
@@ -72,14 +77,14 @@ class NewJob extends Component {
     return (
       <MenuItem
         {...itemProps}
-        key={suggestion.label}
+        key={suggestion.name}
         selected={isHighlighted}
         component="div"
         style={{
           fontWeight: isSelected ? 500 : 400,
         }}
       >
-        {suggestion.label}
+        {suggestion.name}
       </MenuItem>
     );
   }
@@ -263,19 +268,22 @@ class NewJob extends Component {
                   {isOpen ? (
                     <Paper className={classes.paper} square>
                       {skills.map((suggestion, index) =>
-                        this.renderSuggestion({
+                        index < 10 ? this.renderSuggestion({
                           suggestion,
                           index,
-                          itemProps: getItemProps({ item: suggestion.label }),
+                          itemProps: getItemProps({ item: suggestion.name }),
                           highlightedIndex,
                           selectedItem: selectedItem2,
-                        }),
+                        }) : null,
                       )}
                     </Paper>
                   ) : null}
                 </div>
               )}
             </Downshift>
+            <Button fullWidth variant="contained" color="primary" className={classes.button}>
+              Submit
+            </Button>
           </Grid>   
         </Grid> 
         

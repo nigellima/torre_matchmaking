@@ -47,9 +47,26 @@ client.on('error', (e) => {
  });
 
 const jobs = require('./routes/api/jobs');
+const skills = require('./routes/api/skills');
+
+app.use((req, res, next) => {
+  //to allow cross domain requests to send cookie information.
+  res.header('Access-Control-Allow-Credentials', true);
+  
+  // origin can not be '*' when crendentials are enabled. so need to set it to the request origin
+  res.header('Access-Control-Allow-Origin',  req.headers.origin);
+  
+  // list of methods that are supported by the server
+  res.header('Access-Control-Allow-Methods','OPTIONS,GET,PUT,POST,DELETE');
+  
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, X-XSRF-TOKEN');
+  
+  next();
+});
 
 // Use Routes
 app.use('/api/jobs', jobs);
+app.use('/api/skills', skills);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {

@@ -8,6 +8,8 @@ const Job = require('../../models/Job');
 // Validation
 const validateJobInput = require('../../validation/job');
 
+router.get('/test', (req, res) => res.json({ msg: 'Jobs Works' }));
+
 // @route   POST api/jobs
 // @desc    Create Job
 // @access  Private
